@@ -64,18 +64,13 @@ fun MainNavHost() {
                 val id = entry.arguments!!.getInt("id")
                 DetailScreen(
                     id = id,
-                    navigateToDescription = { navController.navigate("description/${it}") }
+                    navigateToDescription = { navController.navigate("description") }
                 )
             }
 
-            composable(
-                route = "description/{desId}",
-                arguments = listOf(
-                    navArgument("desId") { type = NavType.IntType }
-                )
-            ) { entry ->
-                val id = entry.arguments!!.getInt("desId")
-                DetailContentScreen(id)
+            composable(route = "description") { entry ->
+                val id = entry.arguments!!.getInt("id")
+                DetailContent(id)
             }
         }
     }
@@ -103,17 +98,17 @@ fun HomeScreen(
 @Composable
 fun DetailScreen(
     id: Int,
-    navigateToDescription: (Int) -> Unit,
+    navigateToDescription: () -> Unit,
 ) {
     Text(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { navigateToDescription(id) },
+            .clickable(onClick = navigateToDescription),
         text = "id ${id}에 대한 상세 : 상세 화면에서는 이렇게 내용이 적혀 있는데, 만약 내용이 길어지면 내용 클릭을 통해 ...더보기",
     )
 }
 
 @Composable
-fun DetailContentScreen(id: Int) {
+fun DetailContent(id: Int) {
     Text("id ${id}에 대한 상세 : 상세 화면에서는 이렇게 내용이 적혀 있는데, 만약 내용이 길어지면 내용 클릭을 통해 전체 내용을 확인할 수 있다.")
 }
