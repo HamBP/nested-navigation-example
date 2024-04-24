@@ -3,7 +3,6 @@ package me.algosketch.nestednavigationsample
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +46,6 @@ fun MainNavHost() {
     NavHost(
         navController = navController,
         startDestination = "home",
-        exitTransition = { ExitTransition.None },
     ) {
         composable(route = "home") {
             HomeScreen(
@@ -66,13 +64,18 @@ fun MainNavHost() {
                 val id = entry.arguments!!.getInt("id")
                 DetailScreen(
                     id = id,
-                    navigateToDescription = { navController.navigate("description") }
+                    navigateToDescription = { navController.navigate("description/${it}") }
                 )
             }
 
-            composable(route = "description") { entry ->
-                val id = entry.arguments!!.getInt("id")
-                DetailContent(id)
+            composable(
+                route = "description/{desId}",
+                arguments = listOf(
+                    navArgument("desId") { type = NavType.IntType }
+                )
+            ) { entry ->
+                val id = entry.arguments!!.getInt("desId")
+                DetailContentScreen(id)
             }
         }
     }
@@ -100,17 +103,17 @@ fun HomeScreen(
 @Composable
 fun DetailScreen(
     id: Int,
-    navigateToDescription: () -> Unit,
+    navigateToDescription: (Int) -> Unit,
 ) {
     Text(
         modifier = Modifier
             .fillMaxSize()
-            .clickable(onClick = navigateToDescription),
+            .clickable { navigateToDescription(id) },
         text = "id ${id}에 대한 상세 : 상세 화면에서는 이렇게 내용이 적혀 있는데, 만약 내용이 길어지면 내용 클릭을 통해 ...더보기",
     )
 }
 
 @Composable
-fun DetailContent(id: Int) {
+fun DetailContentScreen(id: Int) {
     Text("id ${id}에 대한 상세 : 상세 화면에서는 이렇게 내용이 적혀 있는데, 만약 내용이 길어지면 내용 클릭을 통해 전체 내용을 확인할 수 있다.")
 }
