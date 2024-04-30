@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +18,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -64,7 +70,10 @@ fun MainNavHost() {
             )
         ) {
             composable(route = "summary") { entry ->
-                val id = entry.arguments!!.getInt("id")
+                val parentEntry = remember(entry) { navController.getBackStackEntry("detail/{id}") }
+                val id = parentEntry.arguments!!.getInt("id")
+                // startDestination으로만 진입할 수 있다면 아래 코드도 가능하다
+                // val id = entry.arguments!!.getInt("id")
                 DetailScreen(
                     id = id,
                     navigateToDescription = { navController.navigate("description") },
@@ -73,7 +82,8 @@ fun MainNavHost() {
             }
 
             composable(route = "description") { entry ->
-                val id = entry.arguments!!.getInt("id")
+                val parentEntry = remember(entry) { navController.getBackStackEntry("detail/{id}") }
+                val id = parentEntry.arguments!!.getInt("id")
                 DetailContent(id)
             }
         }
@@ -125,12 +135,22 @@ fun DetailScreen(
         viewModel.sendEvent(DetailEvent.NavigateUp)
     }
 
-    Text(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable { viewModel.sendEvent(DetailEvent.NavigateToDescription) },
-        text = "id ${id}에 대한 상세 : 상세 화면에서는 이렇게 내용이 적혀 있는데, 만약 내용이 길어지면 내용 클릭을 통해 ...더보기",
-    )
+    Column {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { viewModel.sendEvent(DetailEvent.NavigateToDescription) },
+            text = "id ${id}에 대한 상세 : 상세 화면에서는 이렇게 내용이 적... 더보기",
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .background(Color.Gray)
+        ) {
+            Text("장식용 이미지")
+        }
+    }
 }
 
 @Composable
