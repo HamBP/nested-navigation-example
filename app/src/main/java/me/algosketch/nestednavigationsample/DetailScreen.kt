@@ -15,13 +15,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DetailScreen(
     id: Int,
-    navigateToDescription: () -> Unit,
+    navigateToDescription: (Int) -> Unit,
 ) {
     Column {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = navigateToDescription),
+                .clickable { navigateToDescription(id) },
             text = "id ${id}에 대한 상세 : 상세 화면에서는 이렇게 내용이 적... 더보기",
         )
         Box(
