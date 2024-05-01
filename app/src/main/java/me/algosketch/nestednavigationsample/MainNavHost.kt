@@ -37,17 +37,14 @@ fun MainNavHost() {
                 // val id = entry.arguments!!.getInt("id")
                 DetailScreen(
                     id = id,
-                    navigateToDescription = { navController.navigate("description/$it") },
+                    navigateToDescription = { navController.navigate("description") },
+                    popBackstack = navController::popBackStack,
                 )
             }
 
-            composable(
-                route = "description/{id}",
-                arguments = listOf(
-                    navArgument("id") { type = NavType.IntType }
-                ),
-            ) { entry ->
-                val id = entry.arguments!!.getInt("id")
+            composable(route = "description") { entry ->
+                val parentEntry = remember(entry) { navController.getBackStackEntry("detail/{id}") }
+                val id = parentEntry.arguments!!.getInt("id")
                 DetailContentScreen(id)
             }
         }
