@@ -38,7 +38,6 @@ fun MainNavHost() {
                 DetailScreen(
                     id = id,
                     navigateToDescription = { navController.navigate("description") },
-                    popBackstack = navController::popBackStack,
                 )
             }
 
