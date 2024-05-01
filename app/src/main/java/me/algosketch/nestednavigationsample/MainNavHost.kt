@@ -1,5 +1,6 @@
 package me.algosketch.nestednavigationsample
 
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavType
@@ -16,6 +17,7 @@ fun MainNavHost() {
     NavHost(
         navController = navController,
         startDestination = "home",
+        exitTransition = { ExitTransition.None },
     ) {
         composable(route = "home") {
             HomeScreen(
